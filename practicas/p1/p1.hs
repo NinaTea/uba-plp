@@ -175,26 +175,51 @@ potencia base = foldNat 1 (\n rec -> base * rec)
 
 -- ej 12
 
-data AB a = Nil | Bin (AB a) a (AB a)
+--data AB a = Nil | Bin (AB a) a (AB a)
 
 -- i 
 -- llamamos sobre cada rama al caso recursivo respetando su firma
 -- aca vemos como tenemos acceso solo sobre n en la recursion
-foldAB :: b -> (b -> a -> b -> b) -> (AB a) -> b
-foldAB cBase cRec Nil = cBase
-foldAB cBase cRec (Bin izq n der) = cRec (foldAB cBase cRec izq) n (foldAB cBase cRec der)
+-- foldAB :: b -> (b -> a -> b -> b) -> (AB a) -> b
+-- foldAB cBase cRec Nil = cBase
+-- foldAB cBase cRec (Bin izq n der) = cRec (foldAB cBase cRec izq) n (foldAB cBase cRec der)
 
--- aca se hace explicito que podemos acceder a las subestructuras no solo en la recursion
--- caseo Base
--- arbol con "pattern matching" y las dos llamadas recursivas a las subestructurutas, devuelve un b
-recAB :: b -> (AB a -> a -> AB a -> b -> b -> b) -> (AB a) -> b
-recAB cBase cRec Nil = cBase
-recAb cBase cRec (Bin izq n der) = cRec izq n der (recAB cBase cRec izq) (recAB cBase cRec der)
+-- -- aca se hace explicito que podemos acceder a las subestructuras no solo en la recursion
+-- -- caseo Base
+-- -- arbol con "pattern matching" y las dos llamadas recursivas a las subestructurutas, devuelve un b
+-- recAB :: b -> (AB a -> a -> AB a -> b -> b -> b) -> (AB a) -> b
+-- recAB cBase cRec Nil = cBase
+-- recAb cBase cRec (Bin izq n der) = cRec izq n der (recAB cBase cRec izq) (recAB cBase cRec der)
 
-esNil :: (AB a) -> Bool
-esNil arbol =  case arbol of
-  Nil -> True
-  _ -> False
+
+-- de un parcial
+data ABE a = Hoja a | Bin (ABE a) a (ABE a)
+
+foldrAEB :: (a -> b) -> (b -> a -> b -> b) -> (ABE a) -> b
+foldrAEB fHoja fBin arbol = case arbol of
+          Hoja x -> fHoja x
+          Bin i n d -> fBin (rec i) n (rec d)
+        where rec = foldrAEB fHoja fBin 
+
+
+recrABE :: (a->b) -> ( (ABE a) -> a -> (ABE a) -> b -> b -> b) -> (ABE a) -> b
+recrABE rHoja rBin t = case t of
+  Hoja n -> rHoja n
+  Bin i n d -> rBin i n d (rec i) (rec d)
+  where rec = recrABE rHoja rBin
+
+type SearchTree a = ABE a
+  
+ej = Bin (Hoja 1) 2 (Hoja 3)
+
+elemSearchTree ::Ord a => a -> SearchTree a -> Bool
+elemSearchTree elem = foldrAEB (== elem) (\ ri n rd -> elem == n || if ( elem > n ) then rd else ri) 
+
+
+-- esNil :: (AB a) -> Bool
+-- esNil arbol =  case arbol of
+--   Nil -> True
+--   _ -> False
 
 
 -- ej 15

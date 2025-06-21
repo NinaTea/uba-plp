@@ -1,0 +1,56 @@
+---------
+| Ej 1  |
+
+---------
+1. lambda x:Bool. succ(x) - Sí, term anotado.
+2. lambda x.isZero(x) - Sí, term sin anotaciones.
+3. X1 -> sigma - Si, de tipo
+4. erase (f y) - no, no esta en ninguna gramatica
+5. X1 - es valido y es de tipo
+6. X1 -> (Bool -> X2) - Es valido y es de tipo
+7. lambda x:X1 -> X2. (if zero then True else zero succ(True)) - Si, anotado
+8. erase(lambda f:Bool -> s. lambda y:Bool.f y) - no, no esta en las grams.
+
+- Si erase no esta en la gramatica, es valido igual?
+si son validos los erase, entonces serian terminos sin anotaciones
+
+
+------
+|Ej 2| 
+------
+
+1. S = {X_1 = Nat} 
+{x:Nat -> Bool}
+
+2. S = {X1 = X2 -> X3, X4 = Bool} - no me queda claro
+S{x:Bool -> Bool} |- S(lambda x: X2 -> X3-> Bool.x): S(Nat -> X2)
+
+
+-----
+|Ej4|  Inferencia -> RAGU 
+-----
+
+1. λz. if z then zero else succ(zero)
+
+Rectificacion => cambiamos nombres de variables, que nada se repita
+
+Anotacion => Agrego tipos
+
+    Gamma' = NULL
+    M' =  (λz.X_1)(if z then zero else succ(zero))
+
+Generacion => Buscamos el sistema de ecuaciones E
+
+    Aca tengo que hacer el arbolito?
+
+   1 (λz:X_1)(if z then zero else succ(zero))
+                   | abs
+      2  if z then zero else succ(zero)
+         /           |            \
+      3  z       4  zero     5  succ(zero)
+
+1)    I( NULL | (λz.X_1)(if z then zero else succ(zero)) ) = ( X1 -> tau2 | {X_1:Bool, X2=X3})
+    |
+    |-- I(z:X_1| z ) = ( X_1| {X_1:bool}) -> X_1 tiene que ser bool
+    |-- I(z:X_1| zero) = ( tau_2 | Tau_2:Nat)
+    |-- I(z:X_1| succ(zero) ) = ( tau_3 | Tau_2:Nat)

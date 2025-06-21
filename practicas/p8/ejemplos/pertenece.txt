@@ -1,0 +1,5 @@
+-inc(X1 , Y1 ), -pert(Z1 , X1 ), pert(Z1 , Y1 )
+inc(X2 , Y2 ), pert(f(X2 , Y2 ), X2 )
+inc(X3 , Y3 ), -pert(f(X3 , Y3 ), Y3 )
+-pert(X4 , ∅)
+-inc(∅, c)

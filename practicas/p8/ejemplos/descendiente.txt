@@ -1,0 +1,7 @@
+-progenitor(X, Y), descendiente(Y, X)
+-descendiente(X , Y), ¬descendiente(Y, Z), descendiente(X, Z)
+-abuelo(X , Y ), progenitor(X, medio(X, Y))
+-abuelo(X , Y), progenitor(medio(X, Y), Y)
+abuelo(a, b)
+-descendiente(b, a)
+
