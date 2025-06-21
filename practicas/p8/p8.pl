@@ -91,4 +91,16 @@ intersección([H1|T1], L2, T3):- not(member(H1, L2)), intersección(T1, L2, T3).
 
 %! Reversibilidad> que params pueden estar indefinidos al momento de la invocacion?
 
-partir(N, L, L1, L2).
+partir(N, L, L1, L2) :- append(L1, L2, L), length(L1, N).
+
+%! borrar(+ListaO, +X, -ListaSinXs)
+
+borrar([], _, []). % caso vacio
+borrar([X|Xs], X, Ys) :- borrar(Xs, X, Ys). %cuando el elem coincide
+borrar([Y|Xs], X, [Y|Ys]) :- X \= Y, borrar(Xs, X, Ys). % guardo el elem
+
+
+%! sacarDuplicados(+L1, -L2)
+sacarDuplicados([], []).
+sacarDuplicados([X|L1], L2) :- member(X, L1), sacarDuplicados(L1, L2).
+sacarDuplicados([X|L1], [X|L2]) :- not(member(X, L1)), sacarDuplicados(L1, L2).
