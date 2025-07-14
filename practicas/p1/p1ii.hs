@@ -440,3 +440,39 @@ showAIH (BinH izq der) =
 
 -- main :: IO ()
 -- main = mapM_ (putStrLn . showAIH) (take 5 todosLosAIH)
+
+data Operador = Sumar Int| DividirPor Int | Secuencia [Operador]
+ 
+foldOperador :: (Int-> b) -> (Int -> b) -> ([b]-> b) -> Operador -> b
+foldOperador fSumar fDividirPor fSecuencia op = case op of
+                    Sumar n -> fSumar n
+                    DividirPor n -> fDividirPor n
+                    Secuencia xs -> fSecuencia (map rec xs)
+                        where rec = foldOperador fSumar fDividirPor fSecuencia
+
+falla :: Operador -> Bool
+falla op = foldOperador (\_ -> False) (\n -> n == 0) (\xs -> any id xs) op 
+                                                      -- (any id == \xs -> id xs)
+                                                      -- si alguno es True, devuelve True
+
+
+aplanar :: Operador -> Operador
+aplanar = foldOperador (Sumar) (DividirPor) (\xs-> Secuencia (concatMap armoLista xs)) 
+                                        where armoLista ls = case ls of 
+                                                          Secuencia s -> s
+                                                          op -> [op] 
+
+componerTodas :: [a->a] -> (a->a)
+componerTodas = foldl (.) (id) 
+
+aplicar :: Operador -> Int -> Maybe Int
+aplicar op n = if falla (aplanar op) then Nothing
+                                     else Just ((componerTodas (reverse (listaOpAFunc (aplanar op)))) n)
+
+aplicarOp :: Operador -> (Int -> Int)
+aplicarOp op = case op of 
+                    Sumar x       -> (+) x
+                    DividirPor x -> (`div` x)
+
+listaOpAFunc :: Operador -> [Int -> Int]
+listaOpAFunc (Secuencia xs) = map aplicarOp xs
