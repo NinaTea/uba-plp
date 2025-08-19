@@ -455,7 +455,7 @@ falla op = foldOperador (\_ -> False) (\n -> n == 0) (\xs -> any id xs) op
                                                       -- (any id == \xs -> id xs)
                                                       -- si alguno es True, devuelve True
 
-
+  
 aplanar :: Operador -> Operador
 aplanar = foldOperador (Sumar) (DividirPor) (\xs-> Secuencia (concatMap armoLista xs)) 
                                         where armoLista ls = case ls of 

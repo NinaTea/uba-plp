@@ -1,11 +1,13 @@
+flipAll = map flip
+flipRaro = flip . flip
 -- ej2
 -- i
 -- curry :: ((a, b) -> c) -> (a -> b -> c)
--- curry f (x, y) = f x y
+-- curry f x y = f (x, y)
 
 -- -- ii
 -- uncurry :: (a -> b -> c) -> ((a, b) -> c) 
--- uncurry f = \(x, y) -> f x y
+-- uncurry f (x, y) = f x y
 
 -- iii
 -- curryN 1 f  = curry f 
@@ -223,3 +225,15 @@ elemSearchTree elem = foldrAEB (== elem) (\ ri n rd -> elem == n || if ( elem > 
 
 
 -- ej 15
+
+
+-- map :: (a' -> b') -> [a'] -> [b']
+-- filter :: (a->Bool) -> [a] ->[a]
+--        -------------  ----------
+--              a'           b'
+--
+-- map filter ::  ((a->Bool) -> [a] ->[a] ) -> [a->Bool] -> [[a] ->[a]]
+
+
+-- map1 :: ((a -> Bool) -> [a] -> [a]) -> [a] -> [b]
+map1 = map filter  
