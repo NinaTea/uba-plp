@@ -1,3 +1,4 @@
+import Data.List (nub)
 -- ej2
 -- i
 curry :: ((a,b) -> c) -> a -> b -> c
@@ -76,7 +77,7 @@ Recordemos que foldl actua asi @ [a,b,c] z = ( (z @ a) @ b ) @ c <- por esto es 
                                                                   - para listas infinitas
 
 -}
-
+-- iii
 sumasParciales :: (Num a) => [a] -> [a]
 sumasParciales = foldl (\rec x -> if null rec then [x] else rec ++ [last rec + x]) []
 
@@ -90,6 +91,7 @@ falopa
                      3 - (1 - (4 - 2) = 3 - (1 - 4 + 2) = 3 - 1 + 4 -2
 -}
 
+-- iv
 sumaAlt :: (Num a) => [a] -> a
 sumaAlt = foldr (-) 0
 
@@ -98,8 +100,60 @@ sumaAlt = foldr (-) 0
 -- sumaAltRev :: (Num a) => [a] -> a
 -- sumaAltRev = foldl (-) 0
 
+-- v
 sumaAltRev :: (Num a) => [a] -> a
 sumaAltRev ls = sumaAlt (reverse ls)
+
+-- ej 4
+
+--i 
+{-
+ rec: resultado de permutaciones, es decir, son listas de permutaciones
+ 
+ concatMap funcion [a, b, c] -> concatMap arma una nueva lista
+                                aplicando funcion sobre a, b y c y 
+                                luego concatena los resultados
+ 
+ En este caso concatMap (funcionLambda) [sublistas con permutaciones]
+ concatMap agarra una sublista de permutacion, y llama a map que va a armar una permutacion para 
+ todas las posiciones i que generó [0..length elemDeRec]
+ 
+ Luego concatMap sigue aplicando map a cada sublista dentro de rec.
+ 
+ Al final, concatena todo.
+-}
+permutaciones :: [a] -> [[a]]
+permutaciones  = foldr (\x rec -> concatMap (\elemDeRec -> map (armoUnaPermutacionI elemDeRec x) [0..length elemDeRec]) 
+                                            rec
+                       ) 
+                       ([[]])
+                where armoUnaPermutacionI elemDeRec x = (\i -> take i elemDeRec ++ [x] ++ drop i elemDeRec)
+      
+
+-- ii
+-- en rec yo ya tengo mi lista de partes
+-- basicamente a las listas de partes que ya tengo tengo 2 opciones
+-- les agrego x o no les agrego x
+-- (map (x:) rec) ++ rec es la concatenacion de estos dos casos 
+partes :: [a] -> [[a]]
+partes = foldr (\x rec -> (map (x:) rec) ++ rec) [[]]
+
+-- iii
+prefijos :: [a] -> [[a]]
+prefijos = foldr (\x rec -> [[]] ++ (map (x:) rec)) [[]]
+
+-- iv
+-- [1,2,3]
+-- 1 [[2,3],[3], []] -> [1,2,3] : [2,3] :[3]:[]
+-- 
+-- union de prefijos y sufijos y saco los repetidos
+
+sufijos :: [a] -> [[a]]
+sufijos = foldr (\x rec -> (x : head rec) : rec) [[]]
+
+sublistas :: Eq a => [a] -> [[a]]
+sublistas l =  nub ((prefijos l)++(sufijos l))
+
 
 -- ej 5 ¿Es o no r. estructural?
 
@@ -110,8 +164,6 @@ elementosEnPosicionesPares (x:xs) = if null xs
                                     then [x]
                                     else x : elementosEnPosicionesPares (tail xs)
 
-No es r. estructural porque estamos accediendo al resto de la estructura para
-saber que hacer, es r primitiva
 
 entrelazar :: [a] -> [a] -> [a]
 entrelazar [] = id
@@ -119,7 +171,17 @@ entrelazar (x:xs) (y:ys) = \ys -> if null ys
                             then x : entrelazar xs [] -> esto es estructural si fuera solo (x:xs) no?
                             else x : head ys : entrelazar xs (tail ys) 
 
-entrelazar no es estructural tampoco pero ??? 
+
+elementosEnPosicionesPares No es estructural porque a pesar de devolver 
+el caso vacio con un caso constante (o sea sin usar f), 
+usa la estructura xs en el if y luego hace la recursión sobre tail xs.
+   Porque en el caso recursivo puede aparecer la aplicación recursiva de la
+    función a la cola (f xs) pero no puede aparecer la función f usada de ninguna 
+    otra manera, ni puede aparecer la cola xs usada de ninguna otra manera.
+
+En entrelazar es estructural para (x:xs)? Por la def de arriba si 
+
+
 -}
 
 --ej 6
